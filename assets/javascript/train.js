@@ -22,7 +22,7 @@ var firstTrainTime = 900;
 
 
  // Click Button changes what is stored in firebase
-    $("#submit-button").on("click", function() {
+ $("#submit-button").on("click", function() {
 
 	// Get inputs
 	trainName = $("#inputTrainName").val().trim();
@@ -30,17 +30,25 @@ var firstTrainTime = 900;
 	firstTrainTime = $("#inputFirstTrainTime").val().trim();
 	frequency = $("#inputFrequency").val().trim();
 
-	 // Change what is saved in firebase
-      database.ref().set({
-        trainName: trainName,
-        destination: destination,
-        firstTrainTime: firstTrainTime,
-        frequency: frequency
-      });
-
-      // Prevent the page from refreshing
-      return false;
+  // Change what is saved in firebase
+    //database.ref().set({
+    var newTrain = database.ref().push();
+    newTrain.set({
+      trainName: trainName,
+      destination: destination,
+      firstTrainTime: firstTrainTime,
+      frequency: frequency
     });
+
+  //clear forms
+    $("#inputTrainName").val("");
+    $("#inputDestination").val("");
+    $("#inputFirstTrainTime").val("");
+    $("#inputFrequency").val("");
+
+  // Prevent the page from refreshing
+    return false;
+});
 
 
 // When changes occurs it will print them to console and html
