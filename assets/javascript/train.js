@@ -30,6 +30,9 @@ var firstTrainTime = 900;
 	firstTrainTime = $("#inputFirstTrainTime").val().trim();
 	frequency = $("#inputFrequency").val().trim();
 
+  var firstTrain = moment(firstTrainTime);
+
+  
   // Change what is saved in firebase
     //database.ref().set({
     var newTrain = database.ref().push();
@@ -62,12 +65,26 @@ var firstTrainTime = 900;
       console.log(snapshot.val().destination);
       console.log(snapshot.val().firstTrainTime);
       console.log(snapshot.val().frequency);
+    });
 
+    database.ref().on("child_added", function(childSnapshot) {
 
-      // Change the HTML
-      //$("#displayed-data").html(snapshot.val().name + " | " + snapshot.val().age + " | " + snapshot.val().phone);
+      // Log everything that's coming out of snapshot
+      console.log(childSnapshot.val().trainName);
+      console.log(childSnapshot.val().destination);
+      //console.log(childSnapshot.val().email);
+      console.log(childSnapshot.val().firstTrainTime);
+      console.log(childSnapshot.val().frequency );
+      //console.log(childSnapshot.val().joinDate);
+
+      // full list of items to the well
+      $("#trainTableData").append("<tr><td>" + childSnapshot.val().trainName +
+        "</td><td>" + childSnapshot.val().destination +
+        " </td><td> " + childSnapshot.val().firstTrainTime +
+        " </td><td> " + childSnapshot.val().frequency + "</td></tr>");
+
 
       // If any errors are experienced, log them to console.
-    }, function(errorObject) {
+    }), function(errorObject) {
       console.log("The read failed: " + errorObject.code);
-    });
+    };
