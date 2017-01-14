@@ -16,8 +16,8 @@ firebase.initializeApp(config);
 var trainName = "";
 var destination = "";
 var frequency = 0;
-var nextArrival = 1111;
-var minutesAway = 11;
+//var nextArrival = 0;
+var minutesAway = 0;
 var firstTrainTime = 900;  
 
 
@@ -30,7 +30,8 @@ var firstTrainTime = 900;
 	firstTrainTime = $("#inputFirstTrainTime").val().trim();
 	frequency = $("#inputFrequency").val().trim();
 
-  var firstTrain = moment(firstTrainTime);
+
+  
 
   
   // Change what is saved in firebase
@@ -55,17 +56,17 @@ var firstTrainTime = 900;
 
 
 // When changes occurs it will print them to console and html
-    database.ref().on("value", function(snapshot) {
+    // database.ref().on("value", function(snapshot) {
 
-      // Print the initial data to the console.
-      console.log(snapshot.val());
+    //   // Print the initial data to the console.
+    //   console.log(snapshot.val());
 
-      // Log the value of the various properties
-      console.log(snapshot.val().trainName);
-      console.log(snapshot.val().destination);
-      console.log(snapshot.val().firstTrainTime);
-      console.log(snapshot.val().frequency);
-    });
+    //   // Log the value of the various properties
+    //   console.log(snapshot.val().trainName);
+    //   console.log(snapshot.val().destination);
+    //   console.log(snapshot.val().firstTrainTime);
+    //   console.log(snapshot.val().frequency);
+    // });
 
     database.ref().on("child_added", function(childSnapshot) {
 
@@ -77,11 +78,22 @@ var firstTrainTime = 900;
       console.log(childSnapshot.val().frequency );
       //console.log(childSnapshot.val().joinDate);
 
+      //figuure out minutes until next train arrival 
+  var firstTrain = moment(firstTrainTime, "hh:mm").subtract(1, "years");
+  //var currentTime = moment();
+  var diffTime = moment().diff(moment(firstTrain), "minutes");
+  var tRemainder = diffTime % frequency;
+  minutesAway = frequency - tRemainder;
+  console.log("minutesAway is " + minutesAway);
+   var nextArrival = moment().add(minutesAway, "minutes");
+   console.log("current time is " + moment());
+  console.log("next Arrival is " + nextArrival);
+
       // full list of items to the well
       $("#trainTableData").append("<tr><td>" + childSnapshot.val().trainName +
         "</td><td>" + childSnapshot.val().destination +
-        " </td><td> " + childSnapshot.val().firstTrainTime +
-        " </td><td> " + childSnapshot.val().frequency + "</td></tr>");
+        " </td><td> " + childSnapshot.val().frequency +
+        " </td><td> " + moment(nextArrival).format("hh:mm") + " </td><td> " + minutesAway + "</td></tr>");
 
 
       // If any errors are experienced, log them to console.
